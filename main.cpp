@@ -99,7 +99,8 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
       card = std::to_string(war1.front());
     }
     std::string add = half_card;
-    add.replace(6 - card.length(), card.length(), card);
+    if (war1.size() % 2 == 0)
+      add.replace(6 - card.length(), card.length(), card);
     table1 = merge_multiline(add, table1);
   }
   std::string front = ".----\n"
@@ -124,7 +125,8 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
       card = std::to_string(war2.front());
     }
     std::string add = half_card;
-    add.replace(6 - card.length(), card.length(), card);
+    if (war2.size() % 2 == 0)
+      add.replace(6 - card.length(), card.length(), card);
     table2 = merge_multiline(add, table2);
   }
   front = ".----\n"
