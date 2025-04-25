@@ -62,7 +62,8 @@ std::tuple<std::queue<int>, std::queue<int>> deal_cards() {
 }
 
 void print_table(std::queue<int> &player1, std::queue<int> &player2,
-                 std::queue<int> war1, std::queue<int> war2) {
+                 std::queue<int> war1, std::queue<int> war2,
+                 std::string message) {
   const std::string full_card = ".------.\n"
                                 "|      |\n"
                                 "|      |\n"
@@ -110,7 +111,8 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
                       "|    \n"
                       "`----";
   front.replace(21, card.length(), card);
-  table1 = merge_multiline(front, table1);
+  if (table1 != "\n\n\n\n\n")
+    table1 = merge_multiline(front, table1);
   for (; !war2.empty(); war2.pop()) {
     switch (war2.front()) {
     case 11:
@@ -136,12 +138,15 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
           "|    \n"
           "`----";
   front.replace(21, card.length(), card);
-  table2 = merge_multiline(front, table2);
+  if (table2 != "\n\n\n\n\n")
+    table2 = merge_multiline(front, table2);
   clear();
   std::cout << "PLAYER 1" << std::endl
             << deck1 << std::endl
             << std::endl
             << table1 << std::endl
+            << std::endl
+            << message << std::endl
             << std::endl
             << table2 << std::endl
             << std::endl
@@ -153,9 +158,9 @@ int main() {
   std::queue<int> player1, player2;
   std::queue<int> war1, war2;
   std::tie(player1, player2) = deal_cards();
-  print_table(player1, player2, war1, war2);
+  print_table(player1, player2, war1, war2, "hello world");
 
-  while (!player1.empty() && !player2.empty()) {
+  while (!player1.empty() || !player2.empty()) {
   };
   if (player1.empty())
     std::cout << "Player 2 wins!" << std::endl;
