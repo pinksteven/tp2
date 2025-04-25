@@ -27,16 +27,15 @@ std::string merge_multiline(std::string front, std::string back) {
   std::vector<std::string> front_lines, back_lines;
   std::stringstream front_stream(front), back_stream(back);
   std::string line;
-  while (getline(front_stream, line)) {
+  while (getline(front_stream, line, '\n')) {
     front_lines.push_back(line);
   }
-  while (getline(back_stream, line)) {
+  while (getline(back_stream, line, '\n')) {
     back_lines.push_back(line);
   }
   std::string output = "";
-  for (int i = 0; i < front_lines.size(); i++)
+  for (unsigned i = 0; i < front_lines.size(); i++)
     output += front_lines[i] + back_lines[i] + "\n";
-  output.erase(output.end() - 1);
   return output;
 }
 
@@ -83,24 +82,29 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
   deck2.replace(28, 5, "CARDS");
   deck2.replace(21, 2, std::to_string(player2.size()));
   // just to reserve 5 lines already
-  std::string table1 = "\n\n\n\n\n";
-  std::string table2 = "\n\n\n\n\n";
+  std::string table1 = " \n \n \n \n \n ";
+  std::string table2 = " \n \n \n \n \n ";
   std::string card; // I need this available after exiting the loop
   for (; !war1.empty(); war1.pop()) {
     switch (war1.front()) {
     case 11:
       card = "J";
+      break;
     case 12:
       card = "Q";
+      break;
     case 13:
       card = "K";
+      break;
     case 14:
       card = "A";
+      break;
     default:
       card = std::to_string(war1.front());
+      break;
     }
     std::string add = half_card;
-    if (war1.size() % 2 == 0)
+    if (war1.size() % 2 == 1)
       add.replace(6 - card.length(), card.length(), card);
     table1 = merge_multiline(add, table1);
   }
@@ -110,24 +114,29 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
                       "|    \n"
                       "|    \n"
                       "`----";
-  front.replace(21, card.length(), card);
-  if (table1 != "\n\n\n\n\n")
+  front.replace(25, card.length(), card);
+  if (table1 != " \n \n \n \n \n ")
     table1 = merge_multiline(front, table1);
   for (; !war2.empty(); war2.pop()) {
     switch (war2.front()) {
     case 11:
       card = "J";
+      break;
     case 12:
       card = "Q";
+      break;
     case 13:
       card = "K";
+      break;
     case 14:
       card = "A";
+      break;
     default:
       card = std::to_string(war2.front());
+      break;
     }
     std::string add = half_card;
-    if (war2.size() % 2 == 0)
+    if (war2.size() % 2 == 1)
       add.replace(6 - card.length(), card.length(), card);
     table2 = merge_multiline(add, table2);
   }
@@ -137,8 +146,8 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
           "|    \n"
           "|    \n"
           "`----";
-  front.replace(21, card.length(), card);
-  if (table2 != "\n\n\n\n\n")
+  front.replace(25, card.length(), card);
+  if (table2 != " \n \n \n \n \n ")
     table2 = merge_multiline(front, table2);
   clear();
   std::cout << "PLAYER 1" << std::endl
@@ -158,13 +167,41 @@ int main() {
   std::queue<int> player1, player2;
   std::queue<int> war1, war2;
   std::tie(player1, player2) = deal_cards();
-  print_table(player1, player2, war1, war2, "hello world");
-
-  while (!player1.empty() || !player2.empty()) {
-  };
+  print_table(player1, player2, war1, war2, "Game of war");
+  std::cout << "Press enter to continue..." << std::endl;
+  std::cin.ignore();
+  do {
+    war1.push(player1.front());
+    player1.pop();
+    war2.push(player2.front());
+    player2.pop();
+    if (war1.back() > war2.back()) {
+      print_table(player1, player2, war1, war2, "Player 1 wins this round!");
+      player1 = merge_queues(player1, war1);
+      player1 = merge_queues(player1, war2);
+      war1 = {};
+      war2 = {};
+    } else if (war1.back() < war2.back()) {
+      print_table(player1, player2, war1, war2, "Player 2 wins this round!");
+      player2 = merge_queues(player2, war2);
+      player2 = merge_queues(player2, war1);
+      war1 = {};
+      war2 = {};
+    } else {
+      print_table(player1, player2, war1, war2, "War has started!");
+      if (player1.empty() || player2.empty())
+        break;
+      war1.push(player1.front());
+      player1.pop();
+      war2.push(player2.front());
+      player2.pop();
+    }
+    std::cout << "Press enter to continue..." << std::endl;
+    std::cin.ignore();
+  } while (!player1.empty() && !player2.empty());
   if (player1.empty())
-    std::cout << "Player 2 wins!" << std::endl;
+    print_table(player1, player2, war1, war2, "Player 2 wins!");
   else if (player2.empty())
-    std::cout << "Player 1 wins!" << std::endl;
+    print_table(player1, player2, war1, war2, "Player 1 wins!");
   return 0;
 }
