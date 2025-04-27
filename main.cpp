@@ -149,7 +149,6 @@ void print_table(std::queue<int> &player1, std::queue<int> &player2,
   front.replace(25, card.length(), card);
   if (table2 != " \n \n \n \n \n ")
     table2 = merge_multiline(front, table2);
-  clear();
   std::cout << "PLAYER 1" << std::endl
             << deck1 << std::endl
             << std::endl
