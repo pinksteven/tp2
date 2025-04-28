@@ -6,7 +6,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
-
+//cklion is stupid
 // C macro using compiler flags to clear terminal
 void clear() {
 #if defined(_WIN32) || defined(_WIN64)
